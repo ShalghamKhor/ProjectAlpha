@@ -1,0 +1,21 @@
+{
+  "name": "projectalpha",
+  "version": "1.0.0",
+  "description": "- id\r   - name\r   - email\r   - passwordHash\r   - rating\r   - walletBalance\r   - createdAt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShalghamKhor/ProjectAlpha.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ShalghamKhor/ProjectAlpha/issues"
+  },
+  "homepage": "https://github.com/ShalghamKhor/ProjectAlpha#readme"
+}

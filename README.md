@@ -9,8 +9,8 @@
   - rating
   - walletBalance
   - createdAt
-  - 
-Item
+
+## Item
 - id
 - ownerId (User)
 - title
@@ -23,7 +23,7 @@ Item
 - location
 - createdAt
 
-SaleOrder
+## SaleOrder
 - id
 - buyerId
 - itemId
@@ -33,7 +33,7 @@ SaleOrder
 - orderStatus
 - createdAt
 
-RentalOrder
+## RentalOrder
 - id
 - renterId
 - itemId
@@ -43,7 +43,7 @@ RentalOrder
 - totalRentalCost
 - status (REQUESTED, APPROVED, ACTIVE, COMPLETED, CANCELLED)
 
-Review
+## Review
 - id
 - reviewerId
 - reviewedUserId
@@ -51,7 +51,7 @@ Review
 - rating
 - comment
 
-Message
+## Message
 - id
 - senderId
 - receiverId

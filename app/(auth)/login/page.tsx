@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   if (error) return setError(error.message);
 
-  router.push("/");
+  router.push("/home");
 }
 
   return (

@@ -13,21 +13,29 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
+  if (!supabase) {
     setLoading(false);
-
-    if (error) return setError(error.message);
-
-    router.push("/");
+    setError(
+      "Missing Supabase env. Create .env.local with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+    );
+    return;
   }
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  setLoading(false);
+
+  if (error) return setError(error.message);
+
+  router.push("/");
+}
 
   return (
     <main className="min-h-screen bg-[#fbf5ef] flex items-center justify-center px-6 py-16">

@@ -19,6 +19,14 @@ export default function RegisterPage() {
     setError(null);
     setMsg(null);
 
+    if (!supabase) {
+      setLoading(false);
+      setError(
+        "Missing Supabase env. Create .env.local with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+      );
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -28,10 +36,7 @@ export default function RegisterPage() {
 
     if (error) return setError(error.message);
 
-    // If email confirmations are ON, user must confirm via email.
-    // If confirmations are OFF, the user can sign in immediately.
     setMsg("Account created! Check your email to confirm, then sign in.");
-    // router.push("/"); // uncomment if confirmations are OFF and you want redirect
   }
 
   return (

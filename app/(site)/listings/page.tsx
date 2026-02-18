@@ -21,7 +21,6 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // filters (simple MVP)
   const [q, setQ] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "free" | "rental">("all");
 
@@ -30,11 +29,19 @@ export default function ListingsPage() {
       setLoading(true);
       setError(null);
 
+      // ✅ guard if env is missing
+      if (!supabase) {
+        setItems([]);
+        setError(
+          "Missing Supabase env. Create .env.local with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+        );
+        setLoading(false);
+        return;
+      }
+
       const res = await supabase
         .from("listings")
-        .select(
-          "id,title,description,category,type,price_amount,price_unit,status,created_at"
-        )
+        .select("id,title,description,category,type,price_amount,price_unit,status,created_at")
         .eq("status", "available")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -60,8 +67,7 @@ export default function ListingsPage() {
         (x.description ?? "").toLowerCase().includes(needle) ||
         (x.category ?? "").toLowerCase().includes(needle);
 
-      const matchesType =
-        typeFilter === "all" ? true : x.type === typeFilter;
+      const matchesType = typeFilter === "all" ? true : x.type === typeFilter;
 
       return matchesText && matchesType;
     });
@@ -72,15 +78,10 @@ export default function ListingsPage() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">Browse Listings</h1>
-          <p className="opacity-70">
-            Free giveaways and rentals from your community.
-          </p>
+          <p className="opacity-70">Free giveaways and rentals from your community.</p>
         </div>
 
-        <Link
-          href="/new"
-          className="rounded-lg border px-4 py-2 hover:bg-black/5"
-        >
+        <Link href="/new" className="rounded-lg border px-4 py-2 hover:bg-black/5">
           + Create listing
         </Link>
       </header>
@@ -104,20 +105,12 @@ export default function ListingsPage() {
         </select>
       </section>
 
-      {loading && (
-        <div className="rounded-lg border p-4 opacity-70">Loading…</div>
-      )}
+      {loading && <div className="rounded-lg border p-4 opacity-70">Loading…</div>}
 
-      {error && (
-        <div className="rounded-lg border p-4 text-red-600">
-          Error: {error}
-        </div>
-      )}
+      {error && <div className="rounded-lg border p-4 text-red-600">Error: {error}</div>}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="rounded-lg border p-4 opacity-70">
-          No listings found.
-        </div>
+        <div className="rounded-lg border p-4 opacity-70">No listings found.</div>
       )}
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,20 +120,14 @@ export default function ListingsPage() {
               <div className="text-lg font-semibold">{x.title}</div>
 
               <span className="rounded-full border px-2 py-1 text-xs">
-                {x.type === "free"
-                  ? "Free"
-                  : `${x.price_amount ?? "?"}/${x.price_unit ?? "?"}`}
+                {x.type === "free" ? "Free" : `${x.price_amount ?? "?"}/${x.price_unit ?? "?"}`}
               </span>
             </div>
 
-            <div className="mt-1 text-sm opacity-70">
-              {x.category ?? "Uncategorized"}
-            </div>
+            <div className="mt-1 text-sm opacity-70">{x.category ?? "Uncategorized"}</div>
 
             {x.description && (
-              <p className="mt-3 line-clamp-3 text-sm opacity-80">
-                {x.description}
-              </p>
+              <p className="mt-3 line-clamp-3 text-sm opacity-80">{x.description}</p>
             )}
 
             <div className="mt-4 flex items-center justify-between">
@@ -148,10 +135,7 @@ export default function ListingsPage() {
                 {new Date(x.created_at).toLocaleDateString()}
               </span>
 
-              <Link
-                href={`/listings/${x.id}`}
-                className="text-sm underline"
-              >
+              <Link href={`/listings/${x.id}`} className="text-sm underline">
                 View
               </Link>
             </div>
@@ -161,3 +145,4 @@ export default function ListingsPage() {
     </main>
   );
 }
+

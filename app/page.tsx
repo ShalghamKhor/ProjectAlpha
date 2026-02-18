@@ -2,32 +2,7 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#fbf5ef]">
-      {/* Top Nav */}
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-black/5">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-orange-500/10 border border-orange-500/20 grid place-items-center">
-              <span className="text-orange-600 font-bold">⬢</span>
-            </div>
-            <span className="text-lg font-semibold tracking-tight">
-              ShareLocal
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium opacity-80 hover:opacity-100">
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="text-sm font-semibold rounded-full bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 transition"
-            >
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="bg-[#fbf5ef]">
 
       {/* Hero */}
       <main>

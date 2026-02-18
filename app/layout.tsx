@@ -19,20 +19,16 @@ export const metadata: Metadata = {
   description: "Free & Rental Marketplace",
 };
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`flex flex-col min-h-screen ${nunito.variable} ${quicksand.variable} antialiased`}>
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+      <body className={`${nunito.variable} ${quicksand.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );
 }
+
 

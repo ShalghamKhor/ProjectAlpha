@@ -5,7 +5,7 @@ export default function HomePage() {
     <div className="bg-[#fbf5ef]">
 
       {/* Hero */}
-      <main>
+      <div>
         <section className="relative">
           {/* soft band like the screenshot */}
           <div className="absolute inset-x-0 top-[55%] h-52 bg-[#eaf5f3]" />
@@ -76,7 +76,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,82 +1,98 @@
+// app/page.tsx
+import Image from "next/image";
 import Link from "next/link";
 
-export default function HomePage() {
+export default function LandingPage() {
   return (
-    <div className="bg-[#fbf5ef]">
+    <main className="relative h-screen w-screen mt-0 overflow-hidden">
+      {/* Background Image – make it a bit brighter so text stands out */}
+      <Image
+        src="/bg.png"
+        alt="Hero background"
+        fill
+        className="object-cover object-center brightness-[0.55] scale-100 transition-transform duration-700"  // ↑ was 0.4 → now 0.55 (adjust 0.5–0.65)
+        priority
+        quality={80}
+      />
 
-      {/* Hero */}
-      <main>
-        <section className="relative">
-          {/* soft band like the screenshot */}
-          <div className="absolute inset-x-0 top-[55%] h-52 bg-[#eaf5f3]" />
+      {/* Overlay – slightly less dark */}
+      <div className="absolute inset-0 bg-black/45" />  // was /30 → /45 for better contrast balance
 
-          <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-14 text-center space-y-6">
-            <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-zinc-900">
-              Share & Rent{" "}
-              <span className="text-orange-500">Locally</span>
-            </h1>
+      {/* Content */}
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-10 px-6 text-center text-white">
+        <h1 className="text-5xl font-extrabold tracking-tight md:text-7xl lg:text-8xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+          Welcome to
+          <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+            {" "}Your Thing
+          </span>
+        </h1>
 
-            <p className="mx-auto max-w-2xl text-base sm:text-lg text-zinc-600 leading-relaxed">
-              Give away items you no longer need or rent them out to your
-              neighbors. Community sharing made easy.
-            </p>
+        <p className="max-w-2xl text-xl md:text-2xl text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mt-4">
+          Something awesome is waiting for you.
+        </p>
 
-            {/* Search */}
-            <div className="mx-auto mt-8 max-w-2xl space-y-4">
-              <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white px-4 py-3 shadow-sm">
-                <span className="opacity-50">🔎</span>
-                <input
-                  className="w-full outline-none text-sm sm:text-base placeholder:text-zinc-400"
-                  placeholder="Search items..."
-                />
-              </div>
+        {/* ─── Readable & cool list ─── */}
+        <ul className="flex flex-col gap-6 mt-6 md:mt-8">
+          {["Buy", "Sell", "Rent or Borrow", "Offer your help"].map((item, index) => (
+            <li
+              key={item}
+              className={`
+                group relative inline-block
+                text-2xl md:text-3xl font-semibold tracking-wide
+                text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.95)]
+                transition-all duration-400 ease-out
+                hover:text-cyan-300
+                hover:scale-110 hover:-translate-y-1.5
+                hover:drop-shadow-[0_10px_30px_rgba(34,211,238,0.7)]
+                cursor-pointer
+              `}
+            >
+              {/* Expanding glow bar on hover */}
+              <span className="
+                absolute -bottom-2 left-1/2 -translate-x-1/2 
+                h-[4px] w-0 rounded-full 
+                bg-gradient-to-r from-cyan-400 to-purple-500 
+                group-hover:w-3/4 
+                transition-all duration-500 ease-out
+              "/>
 
-              {/* Filters */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <select className="w-full sm:w-44 rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm">
-                  <option>All Types</option>
-                  <option>Free</option>
-                  <option>Rental</option>
-                </select>
+              <span className="
+                inline-block mr-4 text-purple-300 
+                group-hover:text-cyan-200 group-hover:rotate-12 
+                transition-all duration-400
+              ">
+                ➜
+              </span>
 
-                <select className="w-full sm:w-52 rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm">
-                  <option>All Categories</option>
-                  <option>Electronics</option>
-                  <option>Furniture</option>
-                  <option>Tools</option>
-                  <option>Kids</option>
-                  <option>Sports</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </section>
+              {item}
+            </li>
+          ))}
+        </ul>
 
-        {/* Empty state */}
-        <section className="mx-auto max-w-6xl px-6 pb-24">
-          <div className="mx-auto mt-12 max-w-xl text-center rounded-2xl border border-black/10 bg-white/40 py-14 px-6">
-            <div className="mx-auto h-12 w-12 rounded-2xl border border-black/10 bg-white grid place-items-center shadow-sm">
-              <span className="text-xl opacity-70">📦</span>
-            </div>
-
-            <h2 className="mt-5 text-lg font-semibold text-zinc-900">
-              No listings yet
-            </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              Be the first to share something with your community!
-            </p>
-
-            <div className="mt-6 flex justify-center">
-              <Link
-                href="/new"
-                className="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold hover:bg-black/5"
-              >
-                Create listing
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+        {/* Explore Button – more visible glow */}
+        <Link
+          href="/Homepage/home"
+          className="
+            group relative inline-flex items-center justify-center
+            overflow-hidden rounded-full 
+            bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600
+            px-12 py-7 text-xl font-bold uppercase tracking-wider text-white
+            shadow-xl shadow-purple-900/40
+            transition-all duration-400 
+            hover:scale-120 hover:shadow-[0_0_60px_25px_rgba(168,85,247,0.7)]
+            focus:outline-none focus:ring-4 focus:ring-purple-400/60
+            mt-10
+          "
+        >
+          <span className="
+            absolute inset-0 
+            bg-gradient-to-r from-white/15 to-transparent 
+            opacity-0 group-hover:opacity-100 
+            transition-opacity duration-500
+          "/>
+          Explore Now
+        </Link>
+      </div>
+    </main>
   );
 }

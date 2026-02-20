@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { hasCompletedProfile } from "@/lib/profile";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
@@ -33,6 +34,14 @@ export default function LoginPage() {
   setLoading(false);
 
   if (error) return setError(error.message);
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError) return setError(userError.message);
+
+  if (!hasCompletedProfile(userData.user)) {
+    router.push("/onboarding");
+    return;
+  }
 
   router.push("/home");
 }

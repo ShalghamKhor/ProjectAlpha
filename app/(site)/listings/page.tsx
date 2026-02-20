@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -81,9 +80,13 @@ export default function ListingsPage() {
           <p className="opacity-70">Free giveaways and rentals from your community.</p>
         </div>
 
-        <Link href="/new" className="rounded-lg border px-4 py-2 hover:bg-black/5">
-          + Create listing
-        </Link>
+        <span
+          aria-disabled="true"
+          title="Coming soon"
+          className="cursor-not-allowed rounded-lg border px-4 py-2 opacity-60"
+        >
+          + Create listing (coming soon)
+        </span>
       </header>
 
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -96,7 +99,12 @@ export default function ListingsPage() {
 
         <select
           value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value as any)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value === "all" || value === "free" || value === "rental") {
+              setTypeFilter(value);
+            }
+          }}
           className="w-full rounded-lg border px-3 py-2 sm:w-48"
         >
           <option value="all">All</option>
@@ -135,9 +143,13 @@ export default function ListingsPage() {
                 {new Date(x.created_at).toLocaleDateString()}
               </span>
 
-              <Link href={`/listings/${x.id}`} className="text-sm underline">
-                View
-              </Link>
+              <span
+                aria-disabled="true"
+                title="Coming soon"
+                className="cursor-not-allowed text-sm opacity-60"
+              >
+                View (coming soon)
+              </span>
             </div>
           </li>
         ))}
@@ -145,4 +157,3 @@ export default function ListingsPage() {
     </main>
   );
 }
-

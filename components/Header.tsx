@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/button";
+import { hasCompletedProfile } from "@/lib/profile";
 import { supabase } from "@/lib/supabaseClient";
 
 type MiniUser = {
   email?: string | null;
   name?: string | null;
+  profileComplete: boolean;
 };
 
 function hashToHsl(str: string) {
@@ -76,10 +78,15 @@ export default function Header() {
         // try name from metadata, fallback to email
         const metaName =
           (u.user_metadata?.display_name as string | undefined) ||
+          (u.user_metadata?.full_name as string | undefined) ||
           (u.user_metadata?.name as string | undefined) ||
           null;
 
-        setUser({ email: u.email, name: metaName });
+        setUser({
+          email: u.email,
+          name: metaName,
+          profileComplete: hasCompletedProfile(u),
+        });
       }
     }
 
@@ -141,9 +148,18 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/profile" className="flex items-center gap-2">
-                <Avatar name={displayName} seed={seed} />
-              </Link>
+              {user.profileComplete ? (
+                <div className="flex items-center gap-2">
+                  <Avatar name={displayName} seed={seed} />
+                </div>
+              ) : (
+                <Link
+                  href="/onboarding"
+                  className="rounded-full border border-orange-500 px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-orange-50"
+                >
+                  Complete profile
+                </Link>
+              )}
 
              <button
                 onClick={logout}
@@ -158,4 +174,3 @@ export default function Header() {
     </header>
   );
 }
-

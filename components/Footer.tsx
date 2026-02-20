@@ -18,7 +18,7 @@ export default function Footer() {
               Instagram
             </li>
             <li className="flex items-center gap-2 hover:text-yellow-400 transition">
-              <Image src="/icons/twitter.svg" alt="X" width={18} height={18} />
+              <Image src="/icons/twitt.svg" alt="X" width={18} height={18} />
               X (Twitter)
             </li>
           </ul>
@@ -35,7 +35,7 @@ export default function Footer() {
         <div>
           <h2 className="text-lg font-semibold text-white mb-3">Information</h2>
           <ul className="space-y-2">
-            <li className="hover:orange-600 transition">Get Started</li>
+            <li className="hover:text-orange-600 transition">Get Started</li>
             <li className="hover:text-orange-600 transition">Categories</li>
             <li className="hover:text-orange-600 transition">Quick Start</li>
             <li className="hover:text-orange-600 transition">Helpdesk</li>

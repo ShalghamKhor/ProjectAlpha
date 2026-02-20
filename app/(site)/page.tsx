@@ -10,13 +10,13 @@ export default function LandingPage() {
         src="/bg.png"
         alt="Hero background"
         fill
-        className="object-cover object-center brightness-[0.55] scale-100 transition-transform duration-700"  // ↑ was 0.4 → now 0.55 (adjust 0.5–0.65)
+        className="object-cover object-center brightness-[0.55] scale-100 transition-transform duration-700"
         priority
         quality={80}
       />
 
       {/* Overlay – slightly less dark */}
-      <div className="absolute inset-0 bg-black/45" />  // was /30 → /45 for better contrast balance
+      <div className="absolute inset-0 bg-black/45" />
 
       {/* Content */}
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-10 px-6 text-center text-white">
@@ -33,7 +33,7 @@ export default function LandingPage() {
 
         {/* ─── Readable & cool list ─── */}
         <ul className="flex flex-col gap-6 mt-6 md:mt-8">
-          {["Buy", "Sell", "Rent or Borrow", "Offer your help"].map((item, index) => (
+          {["Buy", "Sell", "Rent or Borrow", "Offer your help"].map((item) => (
             <li
               key={item}
               className={`
@@ -96,4 +96,3 @@ export default function LandingPage() {
     </main>
   );
 }
-

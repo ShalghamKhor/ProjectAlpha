@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function HomePage() {
   return (
     <div className="bg-[#fbf5ef]">
@@ -67,12 +65,13 @@ export default function HomePage() {
             </p>
 
             <div className="mt-6 flex justify-center">
-              <Link
-                href="/new"
-                className="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold hover:bg-black/5"
+              <span
+                aria-disabled="true"
+                title="Coming soon"
+                className="cursor-not-allowed rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold opacity-60"
               >
-                Create listing
-              </Link>
+                Create listing (coming soon)
+              </span>
             </div>
           </div>
         </section>

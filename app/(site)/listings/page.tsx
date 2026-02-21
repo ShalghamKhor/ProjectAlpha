@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -9,9 +10,7 @@ type Listing = {
   description: string | null;
   category: string | null;
   type: "free" | "rental";
-  price_amount: number | null;
-  price_unit: "day" | "week" | null;
-  status: "available" | "paused";
+  status: "active" | "reserved" | "closed";
   created_at: string;
 };
 
@@ -40,8 +39,8 @@ export default function ListingsPage() {
 
       const res = await supabase
         .from("listings")
-        .select("id,title,description,category,type,price_amount,price_unit,status,created_at")
-        .eq("status", "available")
+        .select("id,title,description,category,type,status,created_at")
+        .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -80,13 +79,9 @@ export default function ListingsPage() {
           <p className="opacity-70">Free giveaways and rentals from your community.</p>
         </div>
 
-        <span
-          aria-disabled="true"
-          title="Coming soon"
-          className="cursor-not-allowed rounded-lg border px-4 py-2 opacity-60"
-        >
-          + Create listing (coming soon)
-        </span>
+        <Link href="/new" className="rounded-lg border px-4 py-2 hover:bg-orange-50 hover:text-orange-700">
+          + Create listing
+        </Link>
       </header>
 
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -128,7 +123,7 @@ export default function ListingsPage() {
               <div className="text-lg font-semibold">{x.title}</div>
 
               <span className="rounded-full border px-2 py-1 text-xs">
-                {x.type === "free" ? "Free" : `${x.price_amount ?? "?"}/${x.price_unit ?? "?"}`}
+                {x.type === "free" ? "Free" : "Rental"}
               </span>
             </div>
 

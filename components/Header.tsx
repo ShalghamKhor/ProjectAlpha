@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/button";
 import { hasCompletedProfile } from "@/lib/profile";
@@ -59,6 +59,8 @@ function Avatar({ name, seed }: { name: string; seed: string }) {
 export default function Header() {
   const router = useRouter();
   const [user, setUser] = useState<MiniUser | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -105,9 +107,30 @@ export default function Header() {
     };
   }, [router]);
 
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, []);
+
   async function logout() {
     if (!supabase) return;
     await supabase.auth.signOut();
+    setMenuOpen(false);
     setUser(null);
     router.push("/"); // or "/home" if you prefer
     router.refresh();
@@ -128,11 +151,11 @@ export default function Header() {
         </Link>
 
         {/* Nav */}
-        <nav className="hidden sm:flex flex-row gap-4">
-          <Link href="/home" className="hover:underline">HomePage</Link>
-          <Link href="/#" className="hover:underline">Contact</Link>
-          <Link href="/#" className="hover:underline">About Us</Link>
-          <Link href="/#" className="hover:underline">Terms &amp; Rules</Link>
+        <nav className="hidden sm:flex flex-row gap-4 text-zinc-800">
+          <Link href="/home" className="hover:underline hover:text-orange-600 transition-colors">HomePage</Link>
+          <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">Contact</Link>
+          <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">About Us</Link>
+          <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">Terms &amp; Rules</Link>
         </nav>
 
         {/* Right side */}
@@ -149,8 +172,44 @@ export default function Header() {
           ) : (
             <>
               {user.profileComplete ? (
-                <div className="flex items-center gap-2">
-                  <Avatar name={displayName} seed={seed} />
+                <div className="relative" ref={menuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setMenuOpen((v) => !v)}
+                    className="group flex items-center gap-2 rounded-full border border-black/10 bg-white px-2 py-1 text-zinc-900 hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600 transition-colors"
+                    aria-haspopup="menu"
+                    aria-expanded={menuOpen}
+                  >
+                    <Avatar name={displayName} seed={seed} />
+                    <span className="text-sm font-semibold pr-1">Account</span>
+                  </button>
+
+                  {menuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-xl border border-black/10 bg-white p-1 shadow-lg">
+                      <Link
+                        href="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="block rounded-lg px-3 py-2 text-sm hover:bg-orange-50 hover:text-orange-600"
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setMenuOpen(false)}
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm opacity-60 cursor-not-allowed"
+                        disabled
+                      >
+                        Settings (coming soon)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={logout}
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <Link
@@ -160,13 +219,6 @@ export default function Header() {
                   Complete profile
                 </Link>
               )}
-
-             <button
-                onClick={logout}
-                className="text-sm font-semibold rounded-full px-4 py-2 bg-black text-white hover:bg-orange-500 transition"
-              >
-                Logout
-              </button>
             </>
           )}
         </div>

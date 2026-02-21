@@ -140,7 +140,7 @@ export default function Header() {
   const seed = user?.email || displayName;
 
   return (
-    <header className=" bg-white border-b border-black/5">
+    <header className="sticky top-0 z-50 bg-white border-b border-black/5">
       <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">

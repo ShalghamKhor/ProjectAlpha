@@ -153,9 +153,9 @@ export default function Header() {
         {/* Nav */}
         <nav className="hidden sm:flex flex-row gap-4 text-zinc-800">
           <Link href="/home" className="hover:underline hover:text-orange-600 transition-colors">HomePage</Link>
-          <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">Contact</Link>
+          <Link href="/contact" className="hover:underline hover:text-orange-600 transition-colors">Contact</Link>
           <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">About Us</Link>
-          <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">Terms &amp; Rules</Link>
+          <Link href="/##" className="hover:underline hover:text-orange-600 transition-colors">Terms &amp; Rules</Link>
         </nav>
 
         {/* Right side */}

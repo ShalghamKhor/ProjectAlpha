@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { hasCompletedProfile } from "@/lib/profile";
-import { supabase } from "@/lib/supabaseClient";
+import AuthCard from "@/components/auth/AuthCard";
+import { signInWithEmailPassword } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,55 +14,38 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  if (!supabase) {
+    const result = await signInWithEmailPassword(email, password);
     setLoading(false);
-    setError(
-      "Missing Supabase env. Create .env.local with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
-    );
-    return;
+
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+
+    router.push(result.redirectTo);
   }
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  setLoading(false);
-
-  if (error) return setError(error.message);
-
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) return setError(userError.message);
-
-  if (!hasCompletedProfile(userData.user)) {
-    router.push("/onboarding");
-    return;
-  }
-
-  router.push("/home");
-}
 
   return (
-    <main className="min-h-screen bg-[#fbf5ef] flex items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-[0_18px_45px_rgba(0,0,0,0.12)]">
-          {/* Icon */}
-          <div className="mx-auto h-14 w-14 rounded-2xl bg-[#f0842f] grid place-items-center">
-            <span className="text-white text-2xl font-extrabold">⬢</span>
-          </div>
-
-          <h1 className="mt-6 text-center text-3xl font-extrabold text-zinc-900">
-            Welcome Back
-          </h1>
-          <p className="mt-1 text-center text-sm text-zinc-500">
-            Sign in to ShareLocal
-          </p>
-
-          <form onSubmit={onSubmit} className="mt-8 space-y-5">
+    <AuthCard
+      title="Welcome Back"
+      subtitle="Sign in to ShareLocal"
+      footer={
+        <p className="mt-6 text-center text-sm text-zinc-600">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-[#f0842f] hover:underline"
+          >
+            Sign Up
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={onSubmit} className="mt-8 space-y-5">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-zinc-800">
                 Email
@@ -103,19 +86,7 @@ export default function LoginPage() {
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-zinc-600">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-semibold text-[#f0842f] hover:underline"
-            >
-              Sign Up
-            </Link>
-          </p>
-        </div>
-      </div>
-    </main>
+      </form>
+    </AuthCard>
   );
 }

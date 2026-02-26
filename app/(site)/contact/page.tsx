@@ -2,17 +2,33 @@ export default function ContactPage() {
   return (
     <main className="container mx-auto px-5 md:px-8 lg:px-12 max-w-7xl">
       {/* Hero – massive, commanding, slashes in */}
-      <section className="hero min-h-[70vh] flex flex-col justify-center py-20 md:py-32">
-        <h1 
-          className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-none tracking-tighter animate-[reveal_1.4s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0"
+      <section className="hero relative overflow-hidden min-h-[70vh] flex flex-col justify-center py-20 md:py-32">
+        {/* Background Logo (transparent) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src="/openbazar-logo.svg"
+            alt=""
+            className="w-[2200px] opacity-[0.09] select-none"
+          />
+        </div>
+
+        <h1
+          className="relative z-10 text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-none tracking-tighter animate-[reveal_1.4s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0"
         >
-          Prata med oss.<br />Nu.
+          Prata med oss nu.
         </h1>
-        
-        <p className="mt-10 md:mt-14 text-xl md:text-3xl lg:text-4xl font-medium max-w-4xl opacity-0 animate-[fadeUp_1.2s_0.4s_ease-out_forwards] translate-y-8">
-          Har du frågor? Idéer? Vill du hyra ut halva garaget full med prylar?  
-          Släng iväg ett meddelande – vi svarar snabbt och utan lull-lull.
-        </p>
+
+        <div className="relative z-10 mt-10 md:mt-14 max-w-4xl opacity-0 animate-[fadeUp_1.2s_0.4s_ease-out_forwards] translate-y-8">
+          <p className="text-xl md:text-3xl lg:text-4xl font-medium">
+            Frågor, idéer eller funderingar?
+          </p>
+          <p className="text-xl md:text-3xl lg:text-4xl font-medium mt-4">
+            Kontakta oss via mejl, chatt eller sociala medier.
+          </p>
+          <p className="text-xl md:text-3xl lg:text-4xl font-medium mt-2">
+            Vi hjälper dig vidare.
+          </p>
+        </div>
       </section>
 
       {/* Contact Methods – bold cards with stagger */}
@@ -30,11 +46,11 @@ export default function ContactPage() {
             <p className="text-lg md:text-xl leading-relaxed mb-6">
               Snabbaste vägen. Vi lovar svar inom 24 h (oftast snabbare).
             </p>
-            <a 
-              href="mailto:hej@minplattform.se" 
+            <a
+              href="mailto:hej@minplattform.se"
               className="inline-block text-2xl md:text-3xl font-bold text-[var(--primary)] hover:underline underline-offset-8 decoration-4 group-hover:scale-105 transition-transform"
             >
-              hej@minplattform.se
+              Openbazar@gmail.se
             </a>
           </div>
 
@@ -44,11 +60,10 @@ export default function ContactPage() {
               Chatt direkt
             </h3>
             <p className="text-lg md:text-xl leading-relaxed mb-6">
-              Öppet vardagar 09–21. Perfekt för snabba frågor om lån, uthyrning eller buggar.
+              Öppet vardagar 09–21. Perfekt för snabba frågor om lån, uthyrning
+              eller buggar.
             </p>
-            <button 
-              className="bg-[var(--primary)] text-white text-xl md:text-2xl font-bold px-10 py-5 rounded-xl shadow-lg shadow-[var(--primary)]/30 hover:shadow-2xl hover:shadow-[var(--primary)]/50 hover:scale-105 active:scale-95 transition-all duration-300"
-            >
+            <button className="bg-[var(--primary)] text-white text-xl md:text-2xl font-bold px-10 py-5 rounded-xl shadow-lg shadow-[var(--primary)]/30 hover:shadow-2xl hover:shadow-[var(--primary)]/50 hover:scale-105 active:scale-95 transition-all duration-300">
               Öppna chatt
             </button>
           </div>
@@ -62,9 +77,15 @@ export default function ContactPage() {
               Följ oss, DM:a oss, tagga oss – vi är där.
             </p>
             <div className="flex flex-wrap gap-6 text-2xl md:text-3xl font-bold">
-              <a href="#" className="hover:text-[var(--primary)] transition-colors">X / Twitter</a>
-              <a href="#" className="hover:text-[var(--primary)] transition-colors">Instagram</a>
-              <a href="#" className="hover:text-[var(--primary)] transition-colors">LinkedIn</a>
+              <a href="#" className="hover:text-[var(--primary)] transition-colors">
+                X / Twitter
+              </a>
+              <a href="#" className="hover:text-[var(--primary)] transition-colors">
+                Instagram
+              </a>
+              <a href="#" className="hover:text-[var(--primary)] transition-colors">
+                LinkedIn
+              </a>
             </div>
           </div>
         </div>
@@ -86,7 +107,7 @@ export default function ContactPage() {
                 type="text"
                 id="name"
                 className="w-full bg-transparent border-b-4 border-gray-600 focus:border-[var(--primary)] text-2xl md:text-3xl py-4 focus:outline-none transition-colors duration-300 placeholder-gray-500"
-                placeholder="Vad heter du?"
+                placeholder="Namn"
                 required
               />
             </div>
@@ -99,7 +120,7 @@ export default function ContactPage() {
                 type="email"
                 id="email"
                 className="w-full bg-transparent border-b-4 border-gray-600 focus:border-[var(--primary)] text-2xl md:text-3xl py-4 focus:outline-none transition-colors duration-300 placeholder-gray-500"
-                placeholder="din@email.se"
+                placeholder="Mejl"
                 required
               />
             </div>
@@ -113,13 +134,13 @@ export default function ContactPage() {
               id="message"
               rows={6}
               className="w-full bg-transparent border-b-4 border-gray-600 focus:border-[var(--primary)] text-2xl md:text-3xl py-4 focus:outline-none transition-colors duration-300 placeholder-gray-500 resize-none"
-              placeholder="Berätta vad du vill snacka om..."
+              placeholder="Berätta vad du behöver hjälp med."
               required
             />
           </div>
 
           <div className="text-black text-center pt-8">
-            <button 
+            <button
               type="submit"
               className="bg-[var(--primary)] text-black text-2xl md:text-4xl font-black px-16 py-8 rounded-2xl shadow-2xl shadow-[var(--primary)]/40 hover:shadow-[var(--primary)]/60 hover:scale-105 active:scale-95 transition-all duration-400 opacity-0 animate-[fadeUp_1s_0.8s_ease-out_forwards] translate-y-8"
             >

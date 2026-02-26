@@ -75,6 +75,15 @@ function Dropdown({ options, value, onChange, widthClass }: DropdownProps) {
   );
 }
 
+function colorFromId(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+  const hue = hash % 360;
+  return `hsl(${hue} 70% 78%)`;
+}
+
 export default function HomePage() {
   const [items, setItems] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -229,9 +238,19 @@ export default function HomePage() {
           )}
 
           {!loading && !error && filtered.length > 0 && (
-            <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="no-scrollbar mt-12 flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
               {filtered.slice(0, 12).map((x) => (
-                <li key={x.id} className="rounded-2xl border p-4 shadow-sm bg-white/80">
+                <li
+                  key={x.id}
+                  className="w-[280px] shrink-0 snap-start rounded-2xl bg-[#fbf5ef] p-4 sm:w-[320px]"
+                >
+                  <div
+                    className="mb-3 aspect-[4/3] rounded-xl border border-black/10"
+                    style={{ backgroundColor: colorFromId(x.id) }}
+                    aria-hidden="true"
+                  >
+                  </div>
+
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-lg font-semibold">{x.title}</div>
                     <span className="rounded-full border px-2 py-1 text-xs">

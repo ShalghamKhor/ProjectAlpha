@@ -122,7 +122,7 @@ export default function Header() {
 
         {/* Nav */}
         <nav className="hidden sm:flex flex-row gap-4">
-          <Link href="/home" className="hover:underline">HomePage</Link>
+          <Link href="/Home" className="hover:underline">HomePage</Link>
           <Link href="/#" className="hover:underline">Contact</Link>
           <Link href="/#" className="hover:underline">About Us</Link>
           <Link href="/#" className="hover:underline">Terms &amp; Rules</Link>

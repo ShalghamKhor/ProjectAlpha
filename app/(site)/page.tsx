@@ -71,7 +71,7 @@ export default function LandingPage() {
 
         {/* Explore Button – more visible glow */}
         <Link
-          href="/home"
+          href="/Home"
           className="
             group relative inline-flex items-center justify-center
             overflow-hidden rounded-full 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/ui/button";
 import { hasCompletedProfile } from "@/lib/profile";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -124,6 +125,12 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-[#fbf5ef] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 shadow-[0_18px_45px_rgba(0,0,0,0.12)]">
+        <div className="mb-4">
+          <Button href="/home" variant="outline" className="inline-flex items-center gap-1">
+            ← Back
+          </Button>
+        </div>
+
         <h1 className="text-3xl font-extrabold text-zinc-900 text-center">
           Edit Profile
         </h1>

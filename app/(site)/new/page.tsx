@@ -37,8 +37,7 @@ export default function NewListingPage() {
       if (!mounted) return;
 
       if (userError) {
-        setError(userError.message);
-        setAuthLoading(false);
+        router.replace("/login");
         return;
       }
 
@@ -88,7 +87,7 @@ export default function NewListingPage() {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) {
       setSaving(false);
-      setError(userError?.message ?? "Please sign in again.");
+      router.replace("/login");
       return;
     }
 

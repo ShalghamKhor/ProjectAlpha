@@ -11,6 +11,15 @@ body {
   color: #111827;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes reveal {
   0%   { clip-path: inset(0 100% 0 0); opacity: 0; }
   100% { clip-path: inset(0 0 0 0);    opacity: 1; }

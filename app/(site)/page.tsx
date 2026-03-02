@@ -20,6 +20,17 @@ export default function LandingPage() {
 
       {/* Content */}
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-10 px-6 text-center text-white">
+        <div className="rounded-2xl border border-orange-200/40 bg-[#fbf5ef]/95 px-4 py-2 shadow-xl shadow-black/30">
+          <Image
+            src="/openbazar-logo.svg"
+            alt="openbazar"
+            width={300}
+            height={122}
+            priority
+            className="h-auto w-[190px] sm:w-[230px]"
+          />
+        </div>
+
         <h1 className="text-5xl font-extrabold tracking-tight md:text-7xl lg:text-8xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
           Welcome to
           <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">

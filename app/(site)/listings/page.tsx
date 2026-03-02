@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -14,20 +15,36 @@ type Listing = {
   created_at: string;
 };
 
+function colorFromId(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+  const hue = hash % 360;
+  return `hsl(${hue} 70% 78%)`;
+}
+
 export default function ListingsPage() {
+  const searchParams = useSearchParams();
+  const initialQ = searchParams.get("q") ?? "";
+  const initialType = searchParams.get("type");
+  const initialCategory = searchParams.get("category") ?? "All Categories";
+
   const [items, setItems] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [q, setQ] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | "free" | "rental">("all");
+  const [q, setQ] = useState(initialQ);
+  const [typeFilter, setTypeFilter] = useState<"all" | "free" | "rental">(
+    initialType === "free" || initialType === "rental" ? initialType : "all"
+  );
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       setError(null);
 
-      // ✅ guard if env is missing
       if (!supabase) {
         setItems([]);
         setError(
@@ -66,20 +83,27 @@ export default function ListingsPage() {
         (x.category ?? "").toLowerCase().includes(needle);
 
       const matchesType = typeFilter === "all" ? true : x.type === typeFilter;
+      const matchesCategory =
+        categoryFilter === "All Categories" ||
+        (x.category ?? "").toLowerCase() === categoryFilter.toLowerCase();
 
-      return matchesText && matchesType;
+      return matchesText && matchesType && matchesCategory;
     });
-  }, [items, q, typeFilter]);
+  }, [items, q, typeFilter, categoryFilter]);
 
   return (
-    <main className="p-6 space-y-5">
+    <main className="min-h-screen bg-[#fbf5ef] px-6 py-12">
+      <div className="mx-auto max-w-6xl space-y-5">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">Browse Listings</h1>
-          <p className="opacity-70">Free giveaways and rentals from your community.</p>
+          <h1 className="text-3xl font-semibold text-zinc-900">Browse Listings</h1>
+          <p className="text-zinc-600">Free giveaways and rentals from your community.</p>
         </div>
 
-        <Link href="/new" className="rounded-lg border px-4 py-2 hover:bg-orange-50 hover:text-orange-700">
+        <Link
+          href="/new"
+          className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+        >
           + Create listing
         </Link>
       </header>
@@ -89,7 +113,7 @@ export default function ListingsPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search (title, category, description)…"
-          className="w-full rounded-lg border px-3 py-2"
+          className="w-full rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
         />
 
         <select
@@ -100,37 +124,67 @@ export default function ListingsPage() {
               setTypeFilter(value);
             }
           }}
-          className="w-full rounded-lg border px-3 py-2 sm:w-48"
+          className="w-full rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20 sm:w-48"
         >
           <option value="all">All</option>
           <option value="free">Free</option>
           <option value="rental">Rental</option>
         </select>
+
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="w-full rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20 sm:w-56"
+        >
+          <option value="All Categories">All Categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Furniture">Furniture</option>
+          <option value="Tools">Tools</option>
+          <option value="Kids">Kids</option>
+          <option value="Sports">Sports</option>
+          <option value="Home">Home</option>
+        </select>
       </section>
 
-      {loading && <div className="rounded-lg border p-4 opacity-70">Loading…</div>}
+      {loading && (
+        <div className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-zinc-600">
+          Loading…
+        </div>
+      )}
 
-      {error && <div className="rounded-lg border p-4 text-red-600">Error: {error}</div>}
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          Error: {error}
+        </div>
+      )}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="rounded-lg border p-4 opacity-70">No listings found.</div>
+        <div className="rounded-xl border border-black/10 bg-white/60 px-4 py-3 text-sm text-zinc-600">
+          No listings found.
+        </div>
       )}
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((x) => (
-          <li key={x.id} className="rounded-2xl border p-4 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-lg font-semibold">{x.title}</div>
+          <li key={x.id} className="rounded-2xl border border-black/10 bg-white/80 p-4 shadow-sm">
+            <div
+              className="mb-3 h-44 rounded-xl border border-black/10"
+              style={{ backgroundColor: colorFromId(x.id) }}
+              aria-hidden="true"
+            />
 
-              <span className="rounded-full border px-2 py-1 text-xs">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-lg font-semibold text-zinc-900">{x.title}</div>
+
+              <span className="rounded-full border border-black/10 bg-white px-2 py-1 text-xs text-zinc-700">
                 {x.type === "free" ? "Free" : "Rental"}
               </span>
             </div>
 
-            <div className="mt-1 text-sm opacity-70">{x.category ?? "Uncategorized"}</div>
+            <div className="mt-1 text-sm text-zinc-600">{x.category ?? "Uncategorized"}</div>
 
             {x.description && (
-              <p className="mt-3 line-clamp-3 text-sm opacity-80">{x.description}</p>
+              <p className="mt-3 line-clamp-3 text-sm text-zinc-700/90">{x.description}</p>
             )}
 
             <div className="mt-4 flex items-center justify-between">
@@ -140,8 +194,8 @@ export default function ListingsPage() {
 
               <span
                 aria-disabled="true"
-                title="Coming soon"
-                className="cursor-not-allowed text-sm opacity-60"
+                title=""
+                className="cursor-not-allowed text-sm text-zinc-500"
               >
                 View (coming soon)
               </span>
@@ -149,6 +203,7 @@ export default function ListingsPage() {
           </li>
         ))}
       </ul>
+      </div>
     </main>
   );
 }

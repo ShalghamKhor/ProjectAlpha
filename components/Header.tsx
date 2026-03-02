@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -144,10 +145,14 @@ export default function Header() {
       <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-orange-500/10 border border-orange-500/20 grid place-items-center">
-            <span className="text-orange-600 font-bold">⬢</span>
-          </div>
-          <span className="text-lg font-semibold tracking-tight">ShareLocal</span>
+          <Image
+            src="/openbazar-logo.svg"
+            alt="openbazar"
+            width={220}
+            height={90}
+            priority
+            className="h-auto w-[150px] sm:w-[180px]"
+          />
         </Link>
 
         {/* Nav */}

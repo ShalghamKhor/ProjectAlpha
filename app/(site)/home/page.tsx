@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -85,9 +86,11 @@ function colorFromId(id: string) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [items, setItems] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const [searchValue, setSearchValue] = useState("");
   const [typeValue, setTypeValue] = useState("All Types");
@@ -147,6 +150,29 @@ export default function HomePage() {
     });
   }, [items, searchValue, typeValue, categoryValue]);
 
+  function onSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+
+    const query = searchValue.trim();
+    if (query.length > 0 && query.length < 4) {
+      setSearchError("Please enter at least 4 characters to search.");
+      return;
+    }
+    setSearchError(null);
+    if (query) params.set("q", query);
+
+    if (typeValue === "Free") params.set("type", "free");
+    if (typeValue === "Rental") params.set("type", "rental");
+
+    if (categoryValue !== "All Categories") {
+      params.set("category", categoryValue);
+    }
+
+    const qs = params.toString();
+    router.push(qs ? `/listings?${qs}` : "/listings");
+  }
+
   return (
     <div className="bg-[#fbf5ef]">
       <div>
@@ -163,16 +189,25 @@ export default function HomePage() {
               neighbors. Community sharing made easy.
             </p>
 
-            <div className="mx-auto mt-8 max-w-2xl space-y-4">
+            <form onSubmit={onSearchSubmit} className="mx-auto mt-8 max-w-2xl space-y-4">
               <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white px-4 py-3 shadow-sm transition-colors hover:border-orange-300 focus-within:border-orange-400">
                 <span className="opacity-50">🔎</span>
                 <input
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchValue(value);
+                    if (value.trim().length >= 4 || value.trim().length === 0) {
+                      setSearchError(null);
+                    }
+                  }}
                   className="w-full text-sm outline-none placeholder:text-zinc-400 sm:text-base"
                   placeholder="Search items..."
                 />
               </div>
+              {searchError && (
+                <p className="text-sm text-red-600">{searchError}</p>
+              )}
 
               <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <Dropdown
@@ -195,8 +230,14 @@ export default function HomePage() {
                   onChange={setCategoryValue}
                   widthClass="w-full sm:w-52"
                 />
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-[#f0842f] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea7a25] sm:w-auto"
+                >
+                  Search
+                </button>
               </div>
-            </div>
+            </form>
           </div>
         </section>
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Button from "@/components/ui/button";
+import Image from "next/image";
 
 type AuthCardProps = {
   title: string;
@@ -24,8 +25,15 @@ export default function AuthCard({
             </Button>
           </div>
 
-          <div className="mx-auto h-14 w-14 rounded-2xl bg-[#f0842f] grid place-items-center">
-            <span className="text-white text-2xl font-extrabold">⬢</span>
+          <div className="mx-auto w-fit rounded-2xl border border-orange-200 bg-[#fff7ed] px-3 py-2">
+            <Image
+              src="/openbazar-logo.svg"
+              alt="openbazar"
+              width={220}
+              height={90}
+              priority
+              className="h-auto w-[150px]"
+            />
           </div>
 
           <h1 className="mt-6 text-center text-3xl font-extrabold text-zinc-900">

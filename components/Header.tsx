@@ -156,11 +156,19 @@ export default function Header() {
         </Link>
 
         {/* Nav */}
+<<<<<<< HEAD
+        <nav className="hidden sm:flex flex-row gap-4">
+          <Link href="/Home" className="hover:underline">HomePage</Link>
+          <Link href="/#" className="hover:underline">Contact</Link>
+          <Link href="/#" className="hover:underline">About Us</Link>
+          <Link href="/#" className="hover:underline">Terms &amp; Rules</Link>
+=======
         <nav className="hidden sm:flex flex-row gap-4 text-zinc-800">
           <Link href="/home" className="hover:underline hover:text-orange-600 transition-colors">HomePage</Link>
           <Link href="/contact" className="hover:underline hover:text-orange-600 transition-colors">Contact</Link>
           <Link href="/#" className="hover:underline hover:text-orange-600 transition-colors">About Us</Link>
           <Link href="/##" className="hover:underline hover:text-orange-600 transition-colors">Terms &amp; Rules</Link>
+>>>>>>> 33d5de6783e0f54c08791a51f55dfd603aff6b94
         </nav>
 
         {/* Right side */}

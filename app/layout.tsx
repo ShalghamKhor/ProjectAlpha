@@ -24,11 +24,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${quicksand.variable} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${nunito.variable} ${quicksand.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
   );
 }
-
 

@@ -18,7 +18,7 @@ export default function Footer() {
               Instagram
             </li>
             <li className="flex items-center gap-2 hover:text-yellow-400 transition">
-              <Image src="/icons/twitter.svg" alt="X" width={18} height={18} />
+              <Image src="/icons/twitt.svg" alt="X" width={18} height={18} />
               X (Twitter)
             </li>
           </ul>
@@ -26,16 +26,23 @@ export default function Footer() {
 
         {/* Center: Logo */}
         <div className="flex flex-col items-center justify-center text-center">
-         
-          <div className="text-2xl font-bold text-orange-400 mt-2">ItemLending</div>
-          <p className="text-sm mt-1">Lend and Borrow Smarter</p>
+          <div className="rounded-xl border border-white/20 bg-white/95 px-3 py-2 shadow-lg">
+            <Image
+              src="/openbazar-logo.svg"
+              alt="openbazar"
+              width={240}
+              height={98}
+              className="h-auto w-[170px] sm:w-[210px]"
+            />
+          </div>
+          <p className="text-sm mt-2 text-gray-300">Lend and Borrow Smarter</p>
         </div>
 
         {/* Right: Info links */}
         <div>
           <h2 className="text-lg font-semibold text-white mb-3">Information</h2>
           <ul className="space-y-2">
-            <li className="hover:orange-600 transition">Get Started</li>
+            <li className="hover:text-orange-600 transition">Get Started</li>
             <li className="hover:text-orange-600 transition">Categories</li>
             <li className="hover:text-orange-600 transition">Quick Start</li>
             <li className="hover:text-orange-600 transition">Helpdesk</li>
@@ -44,7 +51,7 @@ export default function Footer() {
       </div>
 
       <div className="text-center text-gray-500 text-sm mt-8 border-t border-gray-700 pt-4">
-        © {new Date().getFullYear()} ItemLending. All rights reserved.
+        © {new Date().getFullYear()} openbazar. All rights reserved.
       </div>
     </footer>
   )

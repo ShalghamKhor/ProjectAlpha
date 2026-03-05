@@ -10,16 +10,27 @@ export default function LandingPage() {
         src="/bg.png"
         alt="Hero background"
         fill
-        className="object-cover object-center brightness-[0.55] scale-100 transition-transform duration-700"  // ↑ was 0.4 → now 0.55 (adjust 0.5–0.65)
+        className="object-cover object-center brightness-[0.55] scale-100 transition-transform duration-700"
         priority
         quality={80}
       />
 
       {/* Overlay – slightly less dark */}
-      <div className="absolute inset-0 bg-black/45" />  // was /30 → /45 for better contrast balance
+      <div className="absolute inset-0 bg-black/45" />
 
       {/* Content */}
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-10 px-6 text-center text-white">
+        <div className="rounded-2xl border border-orange-200/40 bg-[#fbf5ef]/95 px-4 py-2 shadow-xl shadow-black/30">
+          <Image
+            src="/openbazar-logo.svg"
+            alt="openbazar"
+            width={300}
+            height={122}
+            priority
+            className="h-auto w-[190px] sm:w-[230px]"
+          />
+        </div>
+
         <h1 className="text-5xl font-extrabold tracking-tight md:text-7xl lg:text-8xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
           Welcome to
           <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
@@ -33,7 +44,7 @@ export default function LandingPage() {
 
         {/* ─── Readable & cool list ─── */}
         <ul className="flex flex-col gap-6 mt-6 md:mt-8">
-          {["Buy", "Sell", "Rent or Borrow", "Offer your help"].map((item, index) => (
+          {["Buy", "Sell", "Rent or Borrow", "Offer your help"].map((item) => (
             <li
               key={item}
               className={`
@@ -96,4 +107,3 @@ export default function LandingPage() {
     </main>
   );
 }
-

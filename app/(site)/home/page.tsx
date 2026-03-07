@@ -10,6 +10,8 @@ type Listing = {
   title: string;
   description: string | null;
   category: string | null;
+  image_url?: string | null;
+  image_path?: string | null;
   type: "free" | "rental";
   status: "active" | "reserved" | "closed";
   created_at: string;
@@ -112,7 +114,7 @@ export default function HomePage() {
 
       const res = await supabase
         .from("listings")
-        .select("id,title,description,category,type,status,created_at")
+        .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(100);
@@ -285,12 +287,20 @@ export default function HomePage() {
                   key={x.id}
                   className="w-[280px] shrink-0 snap-start rounded-2xl bg-[#fbf5ef] p-4 sm:w-[320px]"
                 >
-                  <div
-                    className="mb-3 aspect-[4/3] rounded-xl border border-black/10"
-                    style={{ backgroundColor: colorFromId(x.id) }}
-                    aria-hidden="true"
-                  >
-                  </div>
+                  {x.image_url ? (
+                    <img
+                      src={x.image_url}
+                      alt={x.title}
+                      loading="lazy"
+                      className="mb-3 aspect-[4/3] w-full rounded-xl object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="mb-3 aspect-[4/3] rounded-xl border border-black/10"
+                      style={{ backgroundColor: colorFromId(x.id) }}
+                      aria-hidden="true"
+                    />
+                  )}
 
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-lg font-semibold">{x.title}</div>

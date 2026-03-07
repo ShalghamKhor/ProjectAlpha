@@ -12,6 +12,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [fullName, setFullName] = useState("");
   const [city, setCity] = useState("");
+  const [postcode, setPostcode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +56,7 @@ export default function ProfilePage() {
       setEmail(user.email ?? "");
       setFullName(typeof meta.full_name === "string" ? meta.full_name : "");
       setCity(typeof meta.city === "string" ? meta.city : "");
+      setPostcode(typeof meta.postcode === "string" ? meta.postcode : "");
       setPhone(typeof meta.phone === "string" ? meta.phone : "");
       setLoading(false);
     }
@@ -81,6 +83,7 @@ export default function ProfilePage() {
 
     const cleanName = fullName.trim();
     const cleanCity = city.trim();
+    const cleanPostcode = postcode.trim();
     const cleanPhone = phone.trim();
 
     const { data: userData, error: userError } = await supabase.auth.getUser();
@@ -96,6 +99,7 @@ export default function ProfilePage() {
         ...currentMeta,
         full_name: cleanName,
         city: cleanCity,
+        postcode: cleanPostcode,
         phone: cleanPhone,
         profile_completed: true,
       },
@@ -190,6 +194,20 @@ export default function ProfilePage() {
               required
               className="w-full rounded-xl border border-black/10 bg-[#fbf7f2] px-4 py-3 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
               placeholder="+1 555 123 4567"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-zinc-800">
+              Postcode
+            </label>
+            <input
+              type="text"
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
+              required
+              className="w-full rounded-xl border border-black/10 bg-[#fbf7f2] px-4 py-3 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
+              placeholder="12345"
             />
           </div>
 

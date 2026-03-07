@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Listing = {
@@ -26,7 +26,7 @@ function colorFromId(id: string) {
   return `hsl(${hue} 70% 78%)`;
 }
 
-export default function ListingsPage() {
+function ListingsPageContent() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q") ?? "";
   const initialType = searchParams.get("type");
@@ -218,5 +218,21 @@ export default function ListingsPage() {
       </ul>
       </div>
     </main>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#fbf5ef] px-6 py-12">
+          <div className="mx-auto max-w-6xl rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-zinc-600">
+            Loading listings...
+          </div>
+        </main>
+      }
+    >
+      <ListingsPageContent />
+    </Suspense>
   );
 }

@@ -10,6 +10,8 @@ type Listing = {
   title: string;
   description: string | null;
   category: string | null;
+  image_url?: string | null;
+  image_path?: string | null;
   type: "free" | "rental";
   status: "active" | "reserved" | "closed";
   created_at: string;
@@ -56,7 +58,7 @@ export default function ListingsPage() {
 
       const res = await supabase
         .from("listings")
-        .select("id,title,description,category,type,status,created_at")
+        .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -167,11 +169,22 @@ export default function ListingsPage() {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((x) => (
           <li key={x.id} className="rounded-2xl border border-black/10 bg-white/80 p-4 shadow-sm">
-            <div
-              className="mb-3 h-44 rounded-xl border border-black/10"
-              style={{ backgroundColor: colorFromId(x.id) }}
-              aria-hidden="true"
-            />
+            <div className="mb-3 h-44 overflow-hidden rounded-xl">
+              {x.image_url ? (
+                <img
+                  src={x.image_url}
+                  alt={x.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div
+                  className="h-full w-full border border-black/10"
+                  style={{ backgroundColor: colorFromId(x.id) }}
+                  aria-hidden="true"
+                />
+              )}
+            </div>
 
             <div className="flex items-center justify-between gap-3">
               <div className="text-lg font-semibold text-zinc-900">{x.title}</div>

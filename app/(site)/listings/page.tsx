@@ -93,6 +93,17 @@ function ListingsPageContent() {
     });
   }, [items, q, typeFilter, categoryFilter]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+
+  // Reset page when the filtered set changes.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtered]);
+
+  const currentItems = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <main className="min-h-screen bg-[#fbf5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl space-y-5">
@@ -166,8 +177,11 @@ function ListingsPageContent() {
         </div>
       )}
 
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((x) => (
+      <ul
+        className="grid gap-4 list-none m-0 p-0"
+        style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}
+      >
+        {currentItems.map((x) => (
           <li key={x.id} className="rounded-2xl border border-black/10 bg-white/80 p-4 shadow-sm">
             <div className="mb-3 h-44 overflow-hidden rounded-xl">
               {x.image_url ? (
@@ -216,6 +230,30 @@ function ListingsPageContent() {
           </li>
         ))}
       </ul>
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded border border-black/10 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+
+          <span className="text-sm text-zinc-600">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded border border-black/10 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
       </div>
     </main>
   );

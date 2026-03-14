@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
+type DropdownProps = {
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+  widthClass?: string;
+};
+
 type Listing = {
   id: string;
   title: string;
@@ -14,15 +21,9 @@ type Listing = {
   image_path?: string | null;
   type: "free" | "rental";
   status: "active" | "reserved" | "closed";
-  created_at: string;
+  price?: number | null;
 };
-
-type DropdownProps = {
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-  widthClass: string;
-};
+ 
 
 function Dropdown({ options, value, onChange, widthClass }: DropdownProps) {
   const [open, setOpen] = useState(false);
@@ -97,6 +98,14 @@ export default function HomePage() {
   const [searchValue, setSearchValue] = useState("");
   const [typeValue, setTypeValue] = useState("All Types");
   const [categoryValue, setCategoryValue] = useState("All Categories");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [availableFrom, setAvailableFrom] = useState("");
+  const [availableTo, setAvailableTo] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
 
   useEffect(() => {
     (async () => {
@@ -132,6 +141,12 @@ export default function HomePage() {
 
   const filtered = useMemo(() => {
     const needle = searchValue.trim().toLowerCase();
+
+    const min = parseFloat(minPrice);
+    const max = parseFloat(maxPrice);
+    const fromDate = availableFrom ? new Date(availableFrom) : null;
+    const toDate = availableTo ? new Date(availableTo) : null;
+
     return items.filter((x) => {
       const matchesText =
         needle.length === 0 ||
@@ -148,9 +163,44 @@ export default function HomePage() {
         categoryValue === "All Categories" ||
         (x.category ?? "").toLowerCase() === categoryValue.toLowerCase();
 
-      return matchesText && matchesType && matchesCategory;
+      const matchesPriceMin =
+        minPrice === "" ||
+        (typeof x.price === "number" && !Number.isNaN(min) && x.price >= min);
+      const matchesPriceMax =
+        maxPrice === "" ||
+        (typeof x.price === "number" && !Number.isNaN(max) && x.price <= max);
+
+      const createdAt = new Date(x.created_at);
+      const matchesFromDate = !fromDate || createdAt >= fromDate;
+      const matchesToDate = !toDate || createdAt <= toDate;
+
+      return (
+        matchesText &&
+        matchesType &&
+        matchesCategory &&
+        matchesPriceMin &&
+        matchesPriceMax &&
+        matchesFromDate &&
+        matchesToDate
+      );
     });
-  }, [items, searchValue, typeValue, categoryValue]);
+  }, [
+    items,
+    searchValue,
+    typeValue,
+    categoryValue,
+    minPrice,
+    maxPrice,
+    availableFrom,
+    availableTo,
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+  const currentItems = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtered]);
 
   function onSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -211,7 +261,7 @@ export default function HomePage() {
                 <p className="text-sm text-red-600">{searchError}</p>
               )}
 
-              <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <Dropdown
                   options={["All Types", "Free", "Rental"]}
                   value={typeValue}
@@ -243,7 +293,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-6 pb-24">
+        <section className="mx-auto max-w-6xl mt-20 px-6 pb-24">
           {loading && (
             <div className="mx-auto mt-12 max-w-xl rounded-2xl border border-black/10 bg-white px-6 py-10 text-center text-zinc-600">
               Loading listings...
@@ -281,50 +331,187 @@ export default function HomePage() {
           )}
 
           {!loading && !error && filtered.length > 0 && (
-            <ul className="no-scrollbar mt-12 flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
-              {filtered.slice(0, 12).map((x) => (
-                <li
-                  key={x.id}
-                  className="w-[280px] shrink-0 snap-start rounded-2xl bg-[#fbf5ef] p-4 sm:w-[320px]"
-                >
-                  {x.image_url ? (
-                    <img
-                      src={x.image_url}
-                      alt={x.title}
-                      loading="lazy"
-                      className="mb-3 aspect-[4/3] w-full rounded-xl object-cover"
+            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+              <aside className="rounded-2xl border border-black/10 bg-white p-6">
+                <h2 className="text-lg font-semibold text-zinc-900">Filters</h2>
+
+                <div className="mt-5 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700">
+                      Type
+                    </label>
+                    <Dropdown
+                      options={["All Types", "Free", "Rental"]}
+                      value={typeValue}
+                      onChange={setTypeValue}
+                      widthClass="w-full"
                     />
-                  ) : (
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700">
+                      Category
+                    </label>
+                    <Dropdown
+                      options={[
+                        "All Categories",
+                        "Electronics",
+                        "Furniture",
+                        "Tools",
+                        "Kids",
+                        "Sports",
+                        "Home",
+                      ]}
+                      value={categoryValue}
+                      onChange={setCategoryValue}
+                      widthClass="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium text-zinc-700">
+                        Price range
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMinPrice("");
+                          setMaxPrice("");
+                        }}
+                        className="text-xs text-orange-600 hover:underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        placeholder="Min"
+                        className="w-1/2 rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        placeholder="Max"
+                        className="w-1/2 rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium text-zinc-700">
+                        Available between
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAvailableFrom("");
+                          setAvailableTo("");
+                        }}
+                        className="text-xs text-orange-600 hover:underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        type="date"
+                        value={availableFrom}
+                        onChange={(e) => setAvailableFrom(e.target.value)}
+                        className="w-1/2 rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
+                      />
+                      <input
+                        type="date"
+                        value={availableTo}
+                        onChange={(e) => setAvailableTo(e.target.value)}
+                        className="w-1/2 rounded-xl border border-black/10 bg-[#fbf7f2] px-3 py-2 text-sm text-zinc-900 outline-none focus:border-[#f0842f] focus:ring-2 focus:ring-[#f0842f]/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+              <div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {currentItems.map((x) => (
                     <div
-                      className="mb-3 aspect-[4/3] rounded-xl border border-black/10"
-                      style={{ backgroundColor: colorFromId(x.id) }}
-                      aria-hidden="true"
-                    />
-                  )}
+                      key={x.id}
+                      className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm"
+                    >
+                      {x.image_url ? (
+                        <img
+                          src={x.image_url}
+                          alt={x.title}
+                          loading="lazy"
+                          className="mb-3 aspect-[4/3] w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="mb-3 aspect-[4/3] rounded-xl border border-black/10"
+                          style={{ backgroundColor: colorFromId(x.id) }}
+                          aria-hidden="true"
+                        />
+                      )}
 
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-lg font-semibold">{x.title}</div>
-                    <span className="rounded-full border px-2 py-1 text-xs">
-                      {x.type === "free" ? "Free" : "Rental"}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-lg font-semibold">{x.title}</div>
+                        <span className="rounded-full border px-2 py-1 text-xs">
+                          {x.type === "free" ? "Free" : "Rental"}
+                        </span>
+                      </div>
+
+                      <div className="mt-1 text-sm opacity-70">
+                        {x.category ?? "Uncategorized"}
+                      </div>
+
+                      {x.description && (
+                        <p className="mt-3 line-clamp-3 text-sm opacity-80">
+                          {x.description}
+                        </p>
+                      )}
+
+                      <div className="mt-4 flex items-center justify-between text-xs opacity-60">
+                        <span>{new Date(x.created_at).toLocaleDateString()}</span>
+                        <span className="rounded-full border px-2 py-1 text-xs">
+                          {typeof x.price === "number" ? `$${x.price}` : ""}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 rounded border border-black/10 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+
+                    <span className="text-sm text-zinc-600">
+                      Page {currentPage} of {totalPages}
                     </span>
-                  </div>
 
-                  <div className="mt-1 text-sm opacity-70">
-                    {x.category ?? "Uncategorized"}
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 rounded border border-black/10 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
                   </div>
-
-                  {x.description && (
-                    <p className="mt-3 line-clamp-3 text-sm opacity-80">
-                      {x.description}
-                    </p>
-                  )}
-
-                  <div className="mt-4 text-xs opacity-60">
-                    {new Date(x.created_at).toLocaleDateString()}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                )}
+              </div>
+            </div>
           )}
         </section>
       </div>
